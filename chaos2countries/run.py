@@ -33,7 +33,7 @@ def main():
 
         print('Checking for previously rendered html file')
         htmlfile = measurementID + '-' + start + '-' + stop + '.html'
-        list_of_files = os.listdir('/Users/nora.odelius/pycharmprojects/atlas-dns-chaos-2-rtt-countries/tests')
+        list_of_files = os.listdir('/Users/nora.odelius/nextcloud/git/atlas.ripe.dns/tests')
         if os.path.exists(htmlfile):
             webbrowser.open('file://' + os.path.realpath(htmlfile))
             print('html already exists')
@@ -93,7 +93,6 @@ def main():
                 print('If WARNING occurs some measurements were empty. Do not panic')
                 print("\nDownloading Ripe Atlas CHAOS Measurements and parsing it")
 
-                list_of_files = os.listdir('/Users/nora.odelius/pycharmprojects/atlas-dns-chaos-2-rtt-countries/tests')
                 substring_atlas = '-atlas-results.csv'
                 substring_stats = '-stats-country.csv'
 
