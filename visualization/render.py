@@ -84,7 +84,7 @@ def rendermain(stats):
                 title='ms',
                 titleside='top')
           )]
-
+    print(data)
     sp = sys.argv[1].split("-")
     mid = sp[0]
     if "/" in mid:
