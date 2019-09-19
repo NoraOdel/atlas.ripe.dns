@@ -10,6 +10,7 @@ def rendermain(stats_list):
         df = pd.read_csv(item)
         df['msm_id'] = item.split('-')[0]
         list_df.append(df)
+
     # df_several includes all chosen measurements in the form of one big DataFrame
     df_several = pd.concat(list_df)
     render(df_several)
@@ -42,27 +43,21 @@ def render(dataframe):
     df = dataframe
     maps = df['msm_id'].unique()
 
-    # Writing the measurements being examined into the title
-    measurementID_list = []
-    for item in maps:
-        measurementID_list.append(measurementID_dict[item])
-    measurements = ', '.join(str(x) for x in measurementID_list)
-
     # Communal layout for all measurements
     layout = dict(
-        title='Median RTT for .se NameServers:<br>' + measurements +
-    '<br>Source: <a href="https://atlas.ripe.net/dnsmon/group/se.">\
-    Ripe NCC</a>',
+        title=dict(
+            xanchor='left',
+            text='Median RTT for .se NameServers: <br> <i> specific NameServer and IPv for each map can be found by hovering mouse over '
+              'whichever country</i>'
+              '<br>Source: <a href="https://atlas.ripe.net/dnsmon/group/se.">\
+              Ripe NCC</a>',
+            font=dict(
+                family='Times New Roman',
+                size=15
+            )
+        ),
         showlegend=False,
-        autosize=False,
-        width=1000,
-        height=900,
-        legend=dict(
-            x=0.7,
-            y=-0.1,
-            bgcolor="rgba(255, 255, 255, 0)",
-            font=dict(size=11),
-        )
+        autosize=True
     )
 
     data = []
@@ -82,20 +77,24 @@ def render(dataframe):
 
         measurementID = measurementID_dict[maps[i]]
         msm_dataframe = country.join(medianRTT)
+
+        # data for specific measurement
         data.append(
             dict(
                 type='choropleth',
                 locations=msm_dataframe['country'],
                 z=msm_dataframe['medianRTT'],
                 geo=geo_key,
-                uirevision='hej',
-                name=str(measurementID),
+                hoverinfo='location + z + name',
+                name='NameServer:<br>' + str(measurementID),
                 hoverlabel=dict(
                     namelength=-1
                 ),
-                colorscale=[[0, 'rgb(255, 83, 26)'], [0.35, 'rgb(254, 112, 49)'],
-                            [0.5, 'rgb(254, 141, 73)'], [0.6, 'rgb(253, 170, 96)'],
-                            [0.7, 'rgb(253, 199, 120)'], [1, 'rgb(253, 228, 144)']],
+                colorscale=[[0, 'rgb(255, 83, 26)'], [0.1, 'rgb(255,95,36)'], [0.2, 'rgb(255,107,46)'],
+                            [0.3, 'rgb(254,119,56)'], [0.4, 'rgb(254,131,65)'], [0.45, 'rgb(254,143,75)'],
+                            [0.5, 'rgb(254,155,85)'], [0.55, 'rgb(254,168,95)'], [0.6, 'rgb(254,180,105)'],
+                            [0.7, 'rgb(253,192,114)'], [0.8, 'rgb(253,204,124)'], [0.9, 'rgb(253,216,134)'],
+                            [1, 'rgb(253,228,144)']],
                 autocolorscale=False,
                 zmin=df['medianRTT'].min(),
                 zmax=df['medianRTT'].max(),
@@ -106,11 +105,20 @@ def render(dataframe):
                         width=0.5
                     )),
                 colorbar=dict(
+                    tickfont=dict(
+                        family='Times New Roman',
+                        size=11
+                    ),
+                    titlefont=dict(
+                        family='Times New Roman',
+                        size=13
+                    ),
                     title='ms',
                     titleside='top')
             )
         )
 
+        # layout for specific measurement
         layout[geo_key] = dict(
             domain=dict(x=[], y=[]),
             showcoastlines=False,
@@ -129,7 +137,9 @@ def render(dataframe):
             COLS = ROWS
         else:
             COLS = int(round(math.sqrt(len(maps))))
-            if len(maps) == 3:
+            if len(maps) == 2:
+                ROWS = 2
+            elif len(maps) == 3:
                 ROWS = 2
             elif 4 < len(maps) < 9:
                 ROWS = 3

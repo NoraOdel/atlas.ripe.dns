@@ -15,10 +15,10 @@ def main():
     statsCSV_list = []
     with open(sys.argv[1], 'r') as file:
         list_argument = file.readlines()
-    # goes through every measurementID as sys.argv[1]
-        for line in list_argument:
+        print('Initializing render on map for .se DNS')
 
-            print('Initializing render on map for a .se DNS')
+        # goes through every measurementID as sys.argv[1]
+        for line in list_argument:
             sys.argv[1] = line
 
             # creating timestamp for which measurements are wanted
@@ -32,7 +32,6 @@ def main():
 
             measurementID = sys.argv[1].split('/')[6]
 
-            print('Checking for previously rendered html file')
             htmlfile = start + '-' + stop + '.html'
             list_of_files = os.listdir('/Users/nora.odelius/nextcloud/git/atlas.ripe.dns/tests')
             if os.path.exists(htmlfile):
@@ -58,7 +57,6 @@ def main():
                 probeFile = date + "-probemetadata.json"
 
 
-                print('Checking if probemetadata file for wanted day already exists')
                 file_gz = date + '-probemetadata.json.gz'
                 if os.path.exists(file_gz):
                     print('Probemetadata already exists')
@@ -78,7 +76,6 @@ def main():
                 url = sys.argv[1]
                 atlas_results = measurementID + "-" + date + "-" + start + "-" + stop + "-atlas-results.csv"
                 statsCSV = measurementID + "-" + date + "-" + start + "-" + stop + "-stats-country.csv"
-                print('Checking if statsCSV and atlas_results already exists ')
                 if os.path.exists(statsCSV):
                     print('statsCSV file already exists')
 
@@ -129,7 +126,6 @@ def main():
                     print('Probes not found because of empty measurements:', probes_not_found)
 
                     csvFileFromAtlas.close()
-                    print("DONE parsing results;\n")
                     # list with measurements + trailler
 
                     print("Generating statistics per country from ONLY FOR RCODE=0 (valid queries)")
@@ -190,7 +186,7 @@ def main():
                             tempDict['maxRTT'] = np.max(values)
 
                             jsonDict[country] = tempDict
-                    print('Rendering map with parsed results from statsCSV file\n')
+                    print('Rendering map with statsCSV\n')
             statsCSV_list.append(statsCSV)
         rendermain(statsCSV_list)
 
